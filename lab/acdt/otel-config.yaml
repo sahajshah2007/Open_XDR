@@ -1,0 +1,35 @@
+# OpenTelemetry Collector pipeline: tail telemetry logs, normalize, push to Redis.
+receivers:
+  filelog/zeek_conn:
+    include: ["/zeek/logs/conn.log", "/zeek/logs/http.log"]
+    operators:
+      - type: json_parser
+  filelog/falco:
+    include: ["/var/log/falco/falco.json"]
+    operators:
+      - type: json_parser
+  filelog/wazuh:
+    include: ["/var/ossec/logs/alerts/alerts.json"]
+    operators:
+      - type: json_parser
+
+processors:
+  transform:
+    log_statements:
+      - context: log
+        statements:
+          - set(attributes["source.ip"], attributes["id.orig_h"])
+          - set(attributes["dest.ip"], attributes["id.resp_h"])
+
+exporters:
+  # Redis is not a native OTEL exporter; in practice use a bridge or the
+  # file/kafka exporter. Kept here to document the intended target.
+  debug:
+    verbosity: detailed
+
+service:
+  pipelines:
+    logs:
+      receivers: [filelog/zeek_conn, filelog/falco, filelog/wazuh]
+      processors: [transform]
+      exporters: [debug]

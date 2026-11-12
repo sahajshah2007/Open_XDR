@@ -1,0 +1,16 @@
+# Custom Falco rules tagged with MITRE ATT&CK techniques.
+- rule: Detect SSH from Untrusted Container
+  desc: SSH from a container that should not access the network (possible lateral movement).
+  condition: >
+    spawn_process and container and proc.name = "ssh"
+    and not fd.sip in (172.16.0.0/16, 10.0.0.0/8)
+  output: "SSH from container (user=%user.name container=%container.id dst=%fd.sip)"
+  priority: WARNING
+  tags: [container, network, T1021.004]
+
+- rule: Terminal Shell in Container
+  desc: A shell was spawned inside a container (possible execution / hands-on-keyboard).
+  condition: spawn_process and container and proc.name in (bash, sh, zsh)
+  output: "Shell in container (user=%user.name container=%container.id cmd=%proc.cmdline)"
+  priority: CRITICAL
+  tags: [container, shell, T1059]

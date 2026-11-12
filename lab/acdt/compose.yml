@@ -1,0 +1,42 @@
+# Vulnerable lab stack + attacker container. Run in an ISOLATED network only.
+# WARNING: these images contain intentional vulnerabilities. Never expose to
+# the internet or a shared network.
+
+services:
+  web-01:
+    image: vulnerables/web-dvwa
+    ports:
+      - "127.0.0.1:8080:80"
+    networks:
+      - lan
+    depends_on:
+      - db-01
+
+  db-01:
+    image: mysql:5.7
+    environment:
+      - MYSQL_ROOT_PASSWORD=toor
+    networks:
+      - lan
+
+  api-01:
+    image: python:3.10-slim
+    command: ["python", "-m", "http.server", "5000"]
+    networks:
+      - lan
+
+  cloud-iam:
+    build: ../../backend
+    command: uvicorn acdt.simulator.cloud_mock:app --host 0.0.0.0 --port 9000
+    networks:
+      - lan
+
+  attacker:
+    image: kalilinux/kali-rolling
+    command: ["sleep", "infinity"]
+    networks:
+      - lan
+
+networks:
+  lan:
+    internal: true

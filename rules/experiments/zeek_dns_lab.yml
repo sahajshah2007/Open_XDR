@@ -1,0 +1,15 @@
+title: Synthetic encoded DNS fixture
+id: twintrace-dns-fixture-v1
+status: experimental
+description: Matches a documented synthetic DNS pattern for controlled rule comparisons.
+logsource:
+  source: zeek
+detection:
+  selection:
+    raw.service: dns
+    raw.query|startswith: encoded-lab-sample.
+  condition: selection
+level: medium
+tags:
+  - attack.command_and_control
+  - attack.t1071.004

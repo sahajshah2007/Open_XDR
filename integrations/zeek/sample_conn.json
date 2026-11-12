@@ -1,0 +1,19 @@
+{
+  "ts": 1699999999.5,
+  "uid": "CHhAvVGS1DHF5tdE",
+  "id.orig_h": "192.168.1.100",
+  "id.orig_p": 45678,
+  "id.resp_h": "10.0.0.15",
+  "id.resp_p": 22,
+  "proto": "tcp",
+  "service": "ssh",
+  "duration": 5.123,
+  "orig_bytes": 2480,
+  "resp_bytes": 3120,
+  "conn_state": "SF",
+  "history": "ShADadFf",
+  "orig_pkts": 15,
+  "orig_ip_bytes": 3280,
+  "resp_pkts": 17,
+  "resp_ip_bytes": 4016
+}

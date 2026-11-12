@@ -1,0 +1,37 @@
+# Policy DSL: map detection conditions to response actions + autonomy level.
+policies:
+  - id: high_privilege_escalation
+    description: "High-level credential compromise detected"
+    when:
+      - "attack_techniques contains T1550"
+      - "risk_score > 0.8"
+    actions:
+      - RevokeCredentials(user=%user%)
+      - BlockPort(host=%target_host%, port=22)
+    autonomy: auto
+
+  - id: web_shell
+    description: "Web shell on a public-facing host"
+    when:
+      - "attack_techniques contains T1505"
+    actions:
+      - IsolateHost(host=%host%)
+    autonomy: require_approval
+
+  - id: lateral_movement
+    description: "Lateral movement via remote services"
+    when:
+      - "attack_techniques contains T1021"
+      - "risk_score > 0.5"
+    actions:
+      - IsolateHost(host=%host%)
+    autonomy: require_approval
+
+  - id: ssh_bruteforce_lab
+    description: "Simulated SSH brute-force containment study"
+    when:
+      - "attack_techniques contains T1110"
+      - "risk_score > 0.4"
+    actions:
+      - BlockPort(host=%host%, port=22)
+    autonomy: require_approval
